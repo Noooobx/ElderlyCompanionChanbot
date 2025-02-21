@@ -14,15 +14,16 @@ const BotResponse = ({ previousStep, triggerNextStep }) => {
           { headers: { "Content-Type": "application/json" } }
         );
 
-        // Ensure response is clean and contains no junk
         let botReply = res.data.response?.trim() || "Sorry, I couldn't process that.";
 
-        // Limit response length to prevent long messages
         if (botReply.length > 200) {
           botReply = botReply.substring(0, 200) + "...";
         }
 
         setResponse(botReply);
+
+        // Speak the response
+        speak(botReply);
       } catch (error) {
         console.error("Error fetching response:", error);
         setResponse("Error fetching response.");
@@ -33,6 +34,19 @@ const BotResponse = ({ previousStep, triggerNextStep }) => {
 
     if (previousStep?.message) fetchResponse();
   }, [previousStep, triggerNextStep]);
+
+  // Web Speech API Function
+  const speak = (text) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US"; // Set language
+      utterance.rate = 1; // Normal speed
+      utterance.pitch = 1; // Normal pitch
+      speechSynthesis.speak(utterance);
+    } else {
+      console.warn("Speech synthesis not supported in this browser.");
+    }
+  };
 
   return <span>{response}</span>;
 };
