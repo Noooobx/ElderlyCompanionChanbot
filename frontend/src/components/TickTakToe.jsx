@@ -34,29 +34,34 @@ const TicTacToe = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-5">Tic-Tac-Toe (AI)</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+      <h1 className="text-2xl font-semibold text-gray-800 mb-6 tracking-wide">
+        Tic-Tac-Toe 
+      </h1>
 
-      <div className="grid grid-cols-3 gap-2">
+      {/* Game Board */}
+      <div className="grid grid-cols-3 gap-2 bg-gray-200 p-3 rounded-lg shadow-md">
         {board.map((cell, index) => (
           <button
             key={index}
-            className="w-20 h-20 flex items-center justify-center text-3xl font-bold border bg-white hover:bg-gray-200 shadow-lg"
+            className="w-20 h-20 flex items-center justify-center text-3xl font-semibold border border-gray-300 bg-white rounded-lg hover:bg-gray-100 transition-all"
             onClick={() => handleClick(index)}
             disabled={cell !== null}
           >
-            {cell}
+            <span className={`text-${cell === "X" ? "blue" : "red"}-500`}>{cell}</span>
           </button>
         ))}
       </div>
 
-      <p className="text-lg font-semibold mt-4">
-        {winner ? `🎉 Winner: ${winner}` : `Next Turn: ${isXTurn ? "X (You)" : "O (AI)"}`}
+      {/* Status */}
+      <p className="text-lg font-medium text-gray-700 mt-4">
+        {winner ? `🎉 Winner: ${winner}` : `Next Move: ${isXTurn ? "X (You)" : "O (AI)"}`}
       </p>
 
+      {/* Restart Button */}
       <button
         onClick={resetGame}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600"
+        className="mt-4 px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-blue-700 transition"
       >
         Restart Game
       </button>
@@ -64,6 +69,7 @@ const TicTacToe = () => {
   );
 };
 
+/* Utility Functions */
 const calculateWinner = (board) => {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows

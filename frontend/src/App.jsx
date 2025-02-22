@@ -17,27 +17,22 @@ import ElderlyExercise from "./components/ElderlyExercise.jsx";
 
 function Home({ setIsModalOpen }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        height: "100vh",
-        gap: "20px",
-        position: "relative",
-      }}
-    >
+    <div className="flex flex-col items-center justify-center h-screen gap-6 bg-gray-100 px-4">
       {/* Open Modal Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-blue-500 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-600"
+        className="bg-blue-600 text-white text-lg font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-700 transition-all duration-300"
       >
-        Open Options
+        Activities
       </button>
 
-      {/* Chatbot Component */}
-      <ChatbotComponent />
+      {/* Chatbot Section */}
+      <div className=" rounded-2xl p-6 w-full max-w-md flex flex-col items-center border border-gray-200">
+        <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 drop-shadow-md tracking-wide mb-4">
+          Eldy 🤖
+        </h2>
+        <ChatbotComponent />
+      </div>
     </div>
   );
 }

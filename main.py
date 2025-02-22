@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from plyer import notification
+import google.generativeai as genai
 from textblob import TextBlob  # Sentiment analysis
 
 # Load environment variables
@@ -15,11 +16,51 @@ app = FastAPI()
 # Enable CORS for frontend connection
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001"], 
+    allow_origins=["http://localhost:3001", "http://localhost:3002"],  # Both frontend origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class Reminder(BaseModel):
+    medicine: str
+    time: str
+
+class MedicineRequest(BaseModel):
+    medicine: str
+
+reminders = []
+
+@app.get("/reminders")
+def get_reminders():
+    return {"reminders": reminders}
+
+@app.post("/reminders")
+def add_reminder(reminder: Reminder):
+    reminders.append(reminder.dict())
+    return {"reminders": reminders}
+
+@app.delete("/reminders/{medicine}")
+def delete_reminder(medicine: str):
+    global reminders
+    reminders = [r for r in reminders if r["medicine"] != medicine]
+    return {"reminders": reminders}
+
+@app.post("/send_notification")
+def send_notification(request: MedicineRequest):
+    try:
+        medicine = request.medicine
+        print(f"Sending Notification for {medicine}")
+
+        notification.notify(
+            title="Medicine Reminder",
+            message=f"\u26a0\ufe0f Reminder: It's time to take your {medicine}.",
+            timeout=10
+        )
+
+        return {"message": "Notification sent successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -39,7 +80,7 @@ async def generate_text(request: PromptRequest):
         sentiment = TextBlob(user_input).sentiment.polarity  # Ranges from -1 (negative) to +1 (positive)
 
         # Modify response based on sentiment
-        if sentiment < -0.3:  
+        if sentiment < -0.3:
             sentiment_response = "I sense that you're feeling down. I'm here to help. What's bothering you?"
             chat_history.append({"role": "model", "parts": [{"text": sentiment_response}]})
             return {"response": sentiment_response}
@@ -60,4 +101,4 @@ async def generate_text(request: PromptRequest):
 
 @app.get("/")
 def home():
-    return {"message": "Google Gemini API with FastAPI"}
+    return {"message": "Medicine Reminder & Google Gemini API with FastAPI"}

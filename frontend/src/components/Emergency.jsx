@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 const EmergencyButton = () => {
-  // Retrieve stored contacts from localStorage
   const getStoredContacts = () => {
     const storedContacts = localStorage.getItem("contacts");
-    return storedContacts ? JSON.parse(storedContacts) : [{ name: "vaishakmon", phone: "6235721468" }];
+    return storedContacts ? JSON.parse(storedContacts) : [{ name: "binil", phone: "9544736726" }];
   };
 
   const [contacts, setContacts] = useState(getStoredContacts());
@@ -12,7 +11,6 @@ const EmergencyButton = () => {
   const [newPhone, setNewPhone] = useState("");
 
   useEffect(() => {
-    // Update localStorage whenever contacts change
     localStorage.setItem("contacts", JSON.stringify(contacts));
   }, [contacts]);
 
@@ -21,89 +19,87 @@ const EmergencyButton = () => {
     const encodedMessage = encodeURIComponent(message);
 
     contacts.forEach((contact) => {
-      if (method === "whatsapp") {
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${contact.phone}&text=${encodedMessage}`;
-        window.open(whatsappUrl, "_blank");
-      } else if (method === "sms") {
-        const smsUrl = `sms:${contact.phone}?body=${encodedMessage}`;
-        window.open(smsUrl, "_blank");
-      }
+      const url = method === "whatsapp"
+        ? `https://api.whatsapp.com/send?phone=${contact.phone}&text=${encodedMessage}`
+        : `sms:${contact.phone}?body=${encodedMessage}`;
+      window.open(url, "_blank");
     });
   };
 
   const addContact = () => {
     if (!newName.trim() || !newPhone.trim()) {
-      alert("Please enter both name and phone number.");
+      alert("Enter both name and phone number.");
       return;
     }
 
-    // Ensure phone number contains only digits
-    const phonePattern = /^[0-9]{10}$/; // Adjust as per requirement
+    const phonePattern = /^[0-9]{10}$/;
     if (!phonePattern.test(newPhone)) {
-      alert("Please enter a valid 10-digit phone number.");
+      alert("Enter a valid 10-digit phone number.");
       return;
     }
 
-    const updatedContacts = [...contacts, { name: newName.trim(), phone: newPhone.trim() }];
-    setContacts(updatedContacts); // Update state
+    setContacts([...contacts, { name: newName.trim(), phone: newPhone.trim() }]);
     setNewName("");
     setNewPhone("");
   };
 
+  const removeContact = (index) => {
+    const updatedContacts = contacts.filter((_, i) => i !== index);
+    setContacts(updatedContacts);
+  };
+
   return (
-    <div className="flex flex-col items-center p-4 bg-white shadow-lg rounded-lg w-full max-w-md">
-      <h2 className="text-xl font-bold mb-2">Emergency Contacts</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
+      <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Emergency Contacts</h2>
 
-      {/* Contact List */}
-      <ul className="w-full mb-4">
-        {contacts.map((contact, index) => (
-          <li key={index} className="flex justify-between items-center bg-gray-100 p-2 mb-2 rounded">
-            <span>{contact.name} ({contact.phone})</span>
-          </li>
-        ))}
-      </ul>
+        {/* Contact List */}
+        <div className="space-y-2 mb-4">
+          {contacts.map((contact, index) => (
+            <div key={index} className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded-md">
+              <span className="text-gray-700 text-sm">{contact.name} - {contact.phone}</span>
+              <button onClick={() => removeContact(index)} className="text-red-500 text-sm font-bold">❌</button>
+            </div>
+          ))}
+        </div>
 
-      {/* Add Contact Form */}
-      <div className="flex flex-col w-full gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Name"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          className="border p-2 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Phone Number"
-          value={newPhone}
-          onChange={(e) => setNewPhone(e.target.value)}
-          className="border p-2 rounded"
-        />
-        <button onClick={addContact} className="bg-blue-500 text-white py-2 rounded shadow">
-          ➕ Add Contact
-        </button>
+        {/* Add Contact */}
+        <div className="flex flex-col gap-2 mb-4">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            className="border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
+          <input
+            type="text"
+            placeholder="Phone Number"
+            value={newPhone}
+            onChange={(e) => setNewPhone(e.target.value)}
+            className="border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+          />
+          <button onClick={addContact} className="bg-blue-600 text-white text-sm py-2 rounded-md shadow-md hover:bg-blue-700 transition">
+            ➕ Add Contact
+          </button>
+        </div>
+
+        {/* Emergency Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => sendEmergencyMessage("whatsapp")}
+            className="flex-1 bg-green-500 text-white text-sm py-2 rounded-md shadow-md hover:bg-green-600 transition"
+          >
+            📩 WhatsApp Alert
+          </button>
+          <button
+            onClick={() => sendEmergencyMessage("sms")}
+            className="flex-1 bg-blue-500 text-white text-sm py-2 rounded-md shadow-md hover:bg-blue-600 transition"
+          >
+            📲 SMS Alert
+          </button>
+        </div>
       </div>
-
-      {/* Emergency Buttons */}
-      <div className="flex gap-4">
-        <button
-          onClick={() => sendEmergencyMessage("whatsapp")}
-          className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition"
-        >
-          📩 Send WhatsApp Alert
-        </button>
-
-        <button
-          onClick={() => sendEmergencyMessage("sms")}
-          className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition"
-        >
-          📲 Send SMS Alert
-        </button>
-      </div>
-
-      <p className="text-sm text-gray-600 mt-2">
-        Click to notify family members via WhatsApp or SMS.
-      </p>
     </div>
   );
 };
