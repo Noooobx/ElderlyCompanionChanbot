@@ -12,6 +12,7 @@ const ModalComponent = ({ isOpen, onClose }) => {
     { name: "🚨 Emergency", path: "/emergency" },
     { name: "📰 News & Daily Exercise", path: "/news" },
     {name:"Daily-Exercise",path:"/daily-exercise"},
+    {name:"Story-Teller",path:"/story"}
   ];
 
   return (

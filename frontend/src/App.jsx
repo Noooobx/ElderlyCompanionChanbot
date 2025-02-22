@@ -14,17 +14,13 @@ import NewsDailyExercise from "./components/NewsDailyExercise.jsx";
 import TickTakToe from "./components/TickTakToe.jsx";
 import Game2048 from "./components/Game2048.jsx";
 import ElderlyExercise from "./components/ElderlyExercise.jsx";
+import StoryComponent from "./components/StoryComponent.jsx";
 
 function Home({ setIsModalOpen }) {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-6 bg-gray-100 px-4">
       {/* Open Modal Button */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-600 text-white text-lg font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-700 transition-all duration-300"
-      >
-        Activities
-      </button>
+      
 
       {/* Chatbot Section */}
       <div className=" rounded-2xl p-6 w-full max-w-md flex flex-col items-center border border-gray-200">
@@ -33,6 +29,12 @@ function Home({ setIsModalOpen }) {
         </h2>
         <ChatbotComponent />
       </div>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-600 text-white text-lg font-semibold px-8 py-3 rounded-xl shadow-lg hover:bg-blue-700 transition-all duration-300"
+      >
+        Activities
+      </button>
     </div>
   );
 }
@@ -61,6 +63,8 @@ function App() {
         <Route path="/emergency" element={<Emergency />} />
         <Route path="/news" element={<NewsDailyExercise />} />
         <Route path="/daily-exercise" element={<ElderlyExercise />} />
+
+        <Route path="/story" element={<StoryComponent />} />
       </Routes>
     </div>
   );

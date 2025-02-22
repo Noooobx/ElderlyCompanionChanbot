@@ -105,7 +105,7 @@ const ChatbotComponent = () => {
   ];
 
   return (
-    <div>
+    <div className="flex flex-col">
       <button
         onMouseDown={handleRecord}
         onMouseUp={handleStop}
